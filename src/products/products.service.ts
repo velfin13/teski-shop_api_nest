@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, InternalServerErrorException, Logger, 
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { ProductImage, Product } from './entities';
 
@@ -15,7 +15,8 @@ export class ProductsService {
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
     @InjectRepository(ProductImage)
-    private readonly productImageRepository: Repository<ProductImage>
+    private readonly productImageRepository: Repository<ProductImage>,
+    private readonly dataSource: DataSource,
   ) { }
 
   async create(createProductDto: CreateProductDto) {
@@ -39,8 +40,8 @@ export class ProductsService {
       return this.productRepository.find({
         take: limit,
         skip: offset,
-        relations:{
-          images:true
+        relations: {
+          images: true
         }
       });
     } catch (error) {
@@ -55,17 +56,30 @@ export class ProductsService {
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {
+    const { images, ...toUpdate } = updateProductDto;
     const product = await this.productRepository.preload({
       id,
-      ...updateProductDto,
-      images: []
+      ...toUpdate
     });
     if (!product) throw new NotFoundException(`Product with id ${id} not found`);
-
+    // ⁡⁢⁢⁢create query runner⁡
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
     try {
-      await this.productRepository.save(product);
-      return product;
+
+      if (images) {
+        await queryRunner.manager.delete(ProductImage, { product: { id } });
+        product.images = images.map(image => this.productImageRepository.create({ url: image }))
+      }
+      await queryRunner.manager.save(product);
+      await queryRunner.commitTransaction();
+      await queryRunner.release();
+
+      return this.productRepository.findOneBy({ id });
     } catch (error) {
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
       this.handleExceptions(error);
     }
 
