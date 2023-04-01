@@ -32,9 +32,16 @@ export class Product {
     stock: number;
 
     @Column('text', {
-        array: true
+        array: true,
+        default: []
     })
     sizes: string[]
+
+    @Column('text', {
+        array: true,
+        default: []
+    })
+    tags: string[]
 
     @Column('text')
     gender: string
