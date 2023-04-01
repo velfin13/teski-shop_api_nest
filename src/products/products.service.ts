@@ -4,6 +4,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class ProductsService {
@@ -25,29 +26,50 @@ export class ProductsService {
     }
   }
 
-  findAll() {
+  async findAll(paginationDto: PaginationDto) {
     try {
-      return this.productRepository.find();
+      const { limit = 10, offset = 0 } = paginationDto;
+      return this.productRepository.find({
+        take: limit,
+        skip: offset
+      });
     } catch (error) {
       this.handleExceptions(error);
     }
   }
 
   async findOne(id: string) {
-      const product = await this.productRepository.findOneBy({ id });
-      if (!product) throw new NotFoundException(`Product with id ${id} not found`);
-      return product;
+    const product = await this.productRepository.findOneBy({ id });
+    if (!product) throw new NotFoundException(`Product with id ${id} not found`);
+    return product;
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(id: string, updateProductDto: UpdateProductDto) {
+    const product = await this.productRepository.preload({
+      id,
+      ...updateProductDto
+    });
+    if (!product) throw new NotFoundException(`Product with id ${id} not found`);
+
+    try {
+      await this.productRepository.save(product);
+      return product;
+    } catch (error) {
+      this.handleExceptions(error);
+    }
+
   }
 
   async remove(id: string) {
     const product = await this.productRepository.findOneBy({ id });
-      if (!product) throw new NotFoundException(`Product with id ${id} not found`);
+    if (!product) throw new NotFoundException(`Product with id ${id} not found`);
+    try {
       await this.productRepository.remove(product);
       return product;
+    } catch (error) {
+      this.handleExceptions(error);
+    }
+
   }
 
   private handleExceptions(error: any) {
