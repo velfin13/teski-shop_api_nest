@@ -26,11 +26,19 @@ export class ProductsService {
   }
 
   findAll() {
-    return `This action returns all products`;
+    try {
+      return this.productRepository.find();
+    } catch (error) {
+      this.handleExceptions(error);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  findOne(id: string) {
+    try {
+      return this.productRepository.find({ where: { id } });
+    } catch (error) {
+      this.handleExceptions(error);
+    }
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {
