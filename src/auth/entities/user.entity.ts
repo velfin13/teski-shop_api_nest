@@ -21,7 +21,9 @@ export class User {
     @Column('text')
     lastname: string
 
-    @Column('text')
+    @Column('text',{
+        select:false
+    })
     password: string
 
     @Column('text', {
@@ -31,7 +33,8 @@ export class User {
     roles: string[];
 
     @Column('bool', {
-        default: false
+        default: true,
+        select:false
     }
     )
     isActive: boolean
