@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductsModule } from './products/products.module';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -15,7 +16,10 @@ import { ProductsModule } from './products/products.module';
       password: process.env.DB_PASSWORD,
       autoLoadEntities: true,
       synchronize: true,
-    }), ProductsModule,],
+    }),
+    ProductsModule,
+    FilesModule,
+  ],
   controllers: [],
   providers: [],
 })
