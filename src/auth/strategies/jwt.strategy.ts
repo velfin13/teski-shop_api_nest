@@ -17,6 +17,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
         })
     }
+
+
     async validate(payload: JwtPayload): Promise<User> {
         const { email } = payload;
         const user = await this.userRepository.findOneBy({ email });
@@ -27,4 +29,5 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
         return user;
     }
+    
 }
