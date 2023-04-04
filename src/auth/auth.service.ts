@@ -28,7 +28,7 @@ export class AuthService {
       );
       await this.userRepository.save(user);
       delete user.password;
-      return { ...user, token: this.getJwyToken({ email: user.email }) };
+      return { ...user, token: this.getJwyToken({ id: user.id }) };
     } catch (error) {
       this.handleExceptions(error);
     }
@@ -45,14 +45,15 @@ export class AuthService {
       },
       select: {
         email: true,
-        password: true
+        password: true,
+        id:true
       }
     });
     if (!user) throw new UnauthorizedException(`Invalid credentials entered`);
     if (!bcrypt.compareSync(password, user.password)) throw new UnauthorizedException(`Invalid credentials entered`);
 
     try {
-      return { ...user, token: this.getJwyToken({ email: user.email }) };
+      return { ...user, token: this.getJwyToken({ id: user.id }) };
     } catch (error) {
       this.handleExceptions(error);
     }
