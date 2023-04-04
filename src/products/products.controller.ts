@@ -4,6 +4,8 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { UuidValidationPipe } from 'src/common/pipes/uuid-validation.pipe';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { Auth } from 'src/auth/decorators/auth.decorator';
+import { ValidRoles } from 'src/auth/enum';
 
 @Controller('products')
 export class ProductsController {
@@ -15,6 +17,7 @@ export class ProductsController {
   }
 
   @Get()
+  @Auth(ValidRoles.user)
   findAll(@Query() paginationDto:PaginationDto) {
     return this.productsService.findAll(paginationDto);
   }
