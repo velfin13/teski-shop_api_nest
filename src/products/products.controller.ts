@@ -6,8 +6,10 @@ import { UuidValidationPipe } from 'src/common/pipes/uuid-validation.pipe';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { ValidRoles } from 'src/auth/enum';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @Controller('products')
+@ApiTags('Productos')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) { }
 
@@ -17,6 +19,7 @@ export class ProductsController {
   }
 
   @Get()
+  @ApiBearerAuth()
   @Auth(ValidRoles.user)
   findAll(@Query() paginationDto:PaginationDto) {
     return this.productsService.findAll(paginationDto);

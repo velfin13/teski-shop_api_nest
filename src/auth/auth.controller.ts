@@ -8,7 +8,9 @@ import { IncomingHttpHeaders } from 'http';
 import { UserRoleGuard } from './guards';
 import { ValidRoles } from './enum';
 import { Auth } from './decorators/auth.decorator';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
@@ -24,6 +26,7 @@ export class AuthController {
     return this.authService.login(loginUserDto);
   }
 
+  @ApiBearerAuth()
   @Get('private')
   @UseGuards(AuthGuard())
   private(
@@ -37,7 +40,7 @@ export class AuthController {
     };
   }
 
-
+  @ApiBearerAuth()
   @Get('private2')
   @RoleProtected(ValidRoles.user)
   @UseGuards(AuthGuard(), UserRoleGuard)
@@ -50,6 +53,8 @@ export class AuthController {
     };
   }
 
+
+  @ApiBearerAuth()
   @Get('private3')
   @Auth(ValidRoles.superUser)
   private3(

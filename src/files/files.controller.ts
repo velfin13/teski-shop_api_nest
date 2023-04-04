@@ -4,8 +4,10 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { fileFilters, fileNamer } from './helpers';
 import { diskStorage } from 'multer';
 import { Response } from 'express';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('files')
+@ApiTags('Files')
 export class FilesController {
   constructor(
     private readonly filesService: FilesService
