@@ -7,17 +7,31 @@
 **Node:** v17.9.1\
 **docker**
 
-## Installation
+## Instalación
 
-```bash
-$ npm install
+### 1) instalar los paquetes de npm
+```
+npm install
 ```
 
-```bash
-$ cd docker-postgresql
+### 2) moverse dentro de la carpeta docker-postgresql
+```
+cd docker-postgresql
 ```
 
-## Running the app
+### 3) copiar y pegar el archivo .env.example y renombrar el archivo a .env y configuralo
+
+### 4) levanta el servicio de docker
+```
+docker-compose up -d
+```
+
+### 5) para apagar el servicio se usa
+```
+docker-compose down
+```
+
+## Corriendo la app
 
 ```bash
 # development
