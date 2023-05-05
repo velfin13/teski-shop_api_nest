@@ -5,6 +5,7 @@
 ## Requisitos
 
 **Node:** v17.9.1
+**postgresql**
 
 ## Installation
 
