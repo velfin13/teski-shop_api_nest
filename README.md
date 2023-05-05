@@ -4,13 +4,17 @@
 
 ## Requisitos
 
-**Node:** v17.9.1
-**postgresql**
+**Node:** v17.9.1\
+**docker**
 
 ## Installation
 
 ```bash
 $ npm install
+```
+
+```bash
+$ cd docker-postgresql
 ```
 
 ## Running the app
